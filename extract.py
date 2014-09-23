@@ -31,7 +31,7 @@ if not os.path.exists(folder):
 
 os.chdir(folder)
 
-folderList = [f for f in os.listdir() if folderRE.match(f)]
+folderList = [f for f in os.listdir(folder) if folderRE.match(f)]
 
 
 for f in folderList:
