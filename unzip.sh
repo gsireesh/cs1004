@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Unzips the student submissions into the folder one level up - they are now on
+# the same level as timestamp.txt
+
 shopt -s nullglob
 
 
