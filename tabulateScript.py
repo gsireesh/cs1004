@@ -2,17 +2,28 @@ import os
 import re
 import math
 
-LINEWITHTOTAL = 3
+LINEWITHTOTAL = 1
 
-filesList = [f for f in os.listdir(os.getcwd()) if not os.path.isdir(f) and \
-(f.split('.')[1] == 'txt') and re.match('\D{2,3}\d{4}',f,0)]
+folder = raw_input("Enter the path of the folder containing grade reports, or enter 0 to use the current directory:")
+currentDir = False
+if folder == "0":
+    currentDir = True
+    folder = os.getcwd()
+if folder[-1]!='/':
+    folder+= '/'
+print os.listdir(folder)
+filesList = [f for f in os.listdir(folder) if not os.path.isdir(f) and \
+(len(f.split('.'))>1 and f.split('.')[1] == 'txt') and re.match('\D{2,3}\d{4}',f,0)]
 filesList.sort()
-scoreTable = open('tabulatedScores.txt','w')
+scoreTable = open(folder+'tabulatedScores.txt','w')
 stringofScores = []
 stats = []
 
 for f in filesList:
-    temp = open(f,'r')
+    report = f
+    if not currentDir:
+        report = folder + f
+    temp = open(report,'r')
     print(f)
     score = re.search('(\d+.?\d)/\d+.?\d',temp.readlines()[LINEWITHTOTAL],0).group(1)
     stringofScores.append(f.split('.')[0]+'\t\t'+score)
@@ -22,6 +33,7 @@ for f in filesList:
 
 uniLast = re.compile('\D+(\D)\d{4}')
 stringofScores = sorted(stringofScores, key=lambda score: re.match(uniLast, score, 0).group(1))
+print stringofScores
 
 for s in stringofScores:
     scoreTable.write(s)
