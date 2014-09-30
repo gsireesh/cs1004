@@ -1,5 +1,7 @@
+#### run in cunix
 #### run from outside the hw# directory, pass in assignment #
 #### replace text Programming Project with Problem Set if necessary
+
 import os, sys
 
 if __name__ == '__main__':
