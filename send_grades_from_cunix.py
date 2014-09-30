@@ -1,4 +1,4 @@
-#### run from outside the hw directory, pass in assignment #
+#### run from outside the hw# directory, pass in assignment #
 import os, sys
 
 if __name__ == '__main__':
@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
 	current_path = os.getcwd()
 
-	grades_folder = "hw1/" ##### wherever the grade reports are
+	grades_folder = "hw" + sys.argv[1] + "/" ##### put grade reports in hw1, hw2 etc.
 
 	grade_reports = os.listdir(grades_folder)
 	print sys.argv[1] ##### pass in assignment #
