@@ -1,6 +1,14 @@
 '''
-USAGE : extract.py [ folder that contains assignments ] [ grade report file ]
-[ start UNI ] [ end UNI ]
+USAGE
+python3 extract.py \
+	[ folder that contains assignments ] \
+	[ grade report file ] \
+	[ start UNI ] \
+	[ end UNI ]
+
+Note that the paths can be absolute or relative.
+Absolute paths have a leading slash.
+Relative paths don't.
 '''
 
 import sys 
@@ -9,47 +17,56 @@ import shutil
 import re
 
 
+def main():
+	if(len(sys.argv) != 5):
+		submissionsPath = input('Enter problem set/programming project directory: ')
 
-pwd = os.getcwd()
+		# While the path isn't valid
+		while not os.path.exists(submissionsPath):
+			print('Specified folder does not exist.')
+			submissionsPath = input(
+				'Enter problem set/programming project directory: ')
 
-if(len(sys.argv) != 5):
-	relPath = input('Enter problem set/programming project directory: ')
-	gradeReportPath = input('Enter name of grade report file: ')
-	startUNI = input('Enter first UNI in your group: ')
-	endUNI = input('Enter the last UNI in your group: ')
-else:
-	relPath = sys.argv[1]
-	gradeReportPath = sys.argv[2]
-	startUNI = sys.argv[3]
-	endUNI = sys.argv[4]
+		gradeReportPath = input('Enter name of grade report file: ')
 
-gradeReport = open(gradeReportPath, 'r').read()
+		# While the path isn't valid
+		while not os.path.exists(gradeReportPath):
+			print('Specified folder does not exist. Please use relative path.')
+			gradeReportPath = input(
+				'Enter problem set/programming project directory: ')
 
-folderRE = re.compile('.*, .*\((?P<uni>.*)\)')
+		startUNI = input('Enter first UNI in your group: ')
+		endUNI = input('Enter the last UNI in your group: ')
 
-folder = pwd+'/'+relPath
+	else:
+		submissionsPath = sys.argv[1]
+		gradeReportPath = sys.argv[2]
+		startUNI = sys.argv[3]
+		endUNI = sys.argv[4]
 
-if not os.path.exists(folder):
-	print('Specified folder does not exist!')
-	sys.exit(1)
+	gradeReport = open(gradeReportPath, 'r').read()
+
+	# RE is customized to Courseworks submission download naming.
+	folderRE = re.compile('.*, .*\((?P<uni>.*)\)')
+
+	# Navigate to the submissions path
+	os.chdir(submissionsPath)
+
+	# Compile list of matching folders
+	folderList = [f for f in os.listdir(submissionsPath) if folderRE.match(f)]
+
+	for folder in folderList:
+		uni = folderRE.match(folder).group('uni')
+		if uni >= startUNI and uni <= endUNI: 
+			os.rename(folder, uni)
+			with open(uni+'.txt', 'w') as customGR: 
+				customGR.write(gradeReport)
+		else: 
+			shutil.rmtree(folder)
 
 
-os.chdir(folder)
-
-folderList = [f for f in os.listdir(folder) if folderRE.match(f)]
-
-
-for f in folderList:
-	uni = folderRE.match(f).group('uni')
-	if uni >= startUNI and uni <= endUNI: 
-		os.rename(f, uni)
-		with open(uni+'.txt', 'w') as customGR: 
-			customGR.write(gradeReport)
-	else: 
-		shutil.rmtree(f)
-
-
-
+if __name__ == '__main__':
+    main()
 
 
 
